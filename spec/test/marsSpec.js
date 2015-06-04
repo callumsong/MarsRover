@@ -9,14 +9,15 @@ describe("Moving", function() {
   beforeEach(function() {
     rover = new Rover([1,1,'N']);
     planet = new Planet([100,100]);
+    obstacle = new Obstacle([5,5]);
   });
 
   it("should be able to move forwards", function() {
-    expect(rover.move(rover, 'F', planet)).toEqual([1,2,'N']);
+    expect(rover.move(rover, 'F', obstacle)).toEqual([1,2,'N']);
   });
 
   it("should be able to move backwards", function() {
-    expect(rover.move(rover, 'B', planet)).toEqual([1,0,'N']);
+    expect(rover.move(rover, 'B', obstacle)).toEqual([1,0,'N']);
   });
 
 });
@@ -39,7 +40,7 @@ describe("Roaming", function() {
   beforeEach(function() {
     rover = new Rover([1,1,'N']);
     planet = new Planet ([100,100]);
-    obstacle = new Obstacle ([6,6]);
+    obstacle = new Obstacle ([5,5]);
   });
 
   it("should be able to take two steps east and two steps north", function() {
@@ -64,6 +65,18 @@ describe("Roaming", function() {
 
   it("should not let you go outside of the given boundaries", function() {
     expect(rover.roam('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF', rover, planet, obstacle)).toEqual([1,100,'N']);
+  });
+
+  it("should stop before an obstacle", function() {
+    expect(rover.roam('FFFFRFFFF', rover, planet, obstacle)).toEqual("The rover is at 4,5,E. There is an obstacle at 5,5");
+  });
+
+  it("should stop when it is about to head south to an obstacle", function() {
+    expect(rover.roam('FFFFFRFFFFRF', rover, planet, obstacle)).toEqual("The rover is at 5,6,S. There is an obstacle at 5,5");
+  });
+
+  it("should stop when it is about to go backwards to an obstacle", function() {
+    expect(rover.roam('FFFFFRFFFFLB', rover,planet, obstacle)).toEqual("The rover is at 5,6,N. There is an obstacle at 5,5");
   });
 });
 
@@ -95,8 +108,13 @@ describe("Obstacles", function() {
     obstacle = new Obstacle([2,2]);
   });
 
-  it("should return false when the rover will be the same position as the obstacle", function() {
-    rover.position = [2,2,'N'];
-    expect(obstacle.block(rover, obstacle)).toEqual(false);
+  it("should return false when the rover is about to hit an obstacle", function() {
+    rover.position = [2,1,'N'];
+    expect(obstacle.block(rover.position, obstacle)).toEqual(false);
+  });
+
+  it("should return false when the rover is about to go back to hit an obstacle", function() {
+    rover.position = [2,3,'N'];
+    expect(obstacle.block(rover.position, obstacle)).toEqual(false);
   });
 });
