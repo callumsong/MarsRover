@@ -1,7 +1,9 @@
 var Rover = require('../../api/rover');
 var Planet = require('../../api/planet');
+var Obstacle = require('../../api/obstacle');
 var rover;
 var planet;
+var obstacle;
 
 describe("Moving", function() {
   beforeEach(function() {
@@ -37,30 +39,31 @@ describe("Roaming", function() {
   beforeEach(function() {
     rover = new Rover([1,1,'N']);
     planet = new Planet ([100,100]);
+    obstacle = new Obstacle ([6,6]);
   });
 
   it("should be able to take two steps east and two steps north", function() {
-    expect(rover.roam('RFFLFF', rover, planet)).toEqual([3,3,'N']);
+    expect(rover.roam('RFFLFF', rover, planet, obstacle)).toEqual([3,3,'N']);
   });
 
   it("should be able to take two steps north and one step west", function() {
-    expect(rover.roam('FFLF', rover, planet)).toEqual([0,3,'W']);
+    expect(rover.roam('FFLF', rover, planet, obstacle)).toEqual([0,3,'W']);
   });
 
   it("should be able to go three steps east and three steps west", function() {
-    expect(rover.roam('RFFFLLFFF', rover, planet)).toEqual([1,1,'W']);
+    expect(rover.roam('RFFFLLFFF', rover, planet, obstacle)).toEqual([1,1,'W']);
   });
 
   it("should be able to go two steps north and two steps south", function() {
-    expect(rover.roam('FFRRFF', rover, planet)).toEqual([1,1,'S']);
+    expect(rover.roam('FFRRFF', rover, planet, obstacle)).toEqual([1,1,'S']);
   });
 
   it("should not let you go negative steps", function() {
-    expect(rover.roam('LFF', rover, planet)).toEqual([0,1,'W']);
+    expect(rover.roam('LFF', rover, planet, obstacle)).toEqual([0,1,'W']);
   });
 
   it("should not let you go outside of the given boundaries", function() {
-    expect(rover.roam('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF', rover, planet)).toEqual([1,100,'N']);
+    expect(rover.roam('FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF', rover, planet, obstacle)).toEqual([1,100,'N']);
   });
 });
 
@@ -82,5 +85,18 @@ describe("Constraints", function() {
 
   it("should return true for valid values", function() {
     expect(planet.constrain(rover, [100,100])).toEqual(true);
+  });
+});
+
+describe("Obstacles", function() {
+  beforeEach(function() {
+    rover = new Rover([1,1,'N']);
+    planet = new Planet([100,100]);
+    obstacle = new Obstacle([2,2]);
+  });
+
+  it("should return false when the rover will be the same position as the obstacle", function() {
+    rover.position = [2,2,'N'];
+    expect(obstacle.block(rover, obstacle)).toEqual(false);
   });
 });

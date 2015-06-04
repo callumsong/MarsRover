@@ -42,15 +42,17 @@ Rover.prototype.turn = function(rover, direction) {
   return rover.position;
 }
 
-Rover.prototype.roam = function(directions, rover, planet) {
+Rover.prototype.roam = function(directions, rover, planet, obstacle) {
+  var previous;
   for (var i = 0; i < directions.length; i++) {
+    previous = rover.position;
     if (planet.constrain(rover, planet.bounds)) {
       if (directions[i] === 'F' || directions[i] === 'B') {
         rover.move(rover, directions[i]);
       } else if (directions[i] === 'L' || directions[i] === 'R') {
         rover.turn(rover, directions[i]);
       }
-    } else return rover.position;
+    } else return previous;
   }
   return rover.position;
 }
