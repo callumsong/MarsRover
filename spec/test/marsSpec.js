@@ -21,7 +21,11 @@ describe("Turning", function() {
     rover = new Rover([1,1,'N']);
   });
 
-  it("should be able to turn right", function() {
+  it("should be able to turn left", function() {
     expect(rover.turn(rover.position, 'L')).toEqual([1,1,'W']);
   });
-})
+
+  it("should be able to turn right", function() {
+    expect(rover.turn(rover.position, 'R')).toEqual([1,1,'E']);
+  });
+});

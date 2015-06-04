@@ -19,6 +19,26 @@ Rover.prototype.move = function(position, direction) {
 };
 
 Rover.prototype.turn = function(position, direction) {
+  var left = {
+    'N': 'W',
+    'W': 'S',
+    'S': 'E',
+    'E': 'N'
+  }
+
+  var right = {
+    'N': 'E',
+    'E': 'S',
+    'S': 'W',
+    'W': 'N'
+  }
+
+  if (direction === 'L') {
+    position[2] = left[position[2]];
+  } else if (direction === 'R') {
+    position[2] = right[position[2]];
+  }
+
   return position;
 }
 
