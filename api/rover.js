@@ -2,21 +2,17 @@ function Rover (position) {
   this.position = position;
 }
 
-Rover.prototype.move = function(rover, direction, planet) {
+Rover.prototype.move = function(rover, direction) {
   var compass = {
     'N': [1, 1],
     'S': [1, -1],
     'E': [0, 1],
     'W': [0, -1]
   };
-  if (planet.constrain(rover, planet.bounds)) {
-    if (direction === 'F') {
-      rover.position[compass[rover.position[2]][0]] += compass[rover.position[2]][1];
-    } else if (direction === 'B') {
-      rover.position[compass[rover.position[2]][0]] -= compass[rover.position[2]][1];
-    }
-  } else {
-    return rover.position;
+  if (direction === 'F') {
+    rover.position[compass[rover.position[2]][0]] += compass[rover.position[2]][1];
+  } else if (direction === 'B') {
+    rover.position[compass[rover.position[2]][0]] -= compass[rover.position[2]][1];
   }
 
   return rover.position;
@@ -48,11 +44,13 @@ Rover.prototype.turn = function(rover, direction) {
 
 Rover.prototype.roam = function(directions, rover, planet) {
   for (var i = 0; i < directions.length; i++) {
-    if (directions[i] === 'F' || directions[i] === 'B') {
-      rover.move(rover, directions[i], planet);
-    } else if (directions[i] === 'L' || directions[i] === 'R') {
-      rover.turn(rover, directions[i]);
-    }
+    if (planet.constrain(rover, planet.bounds)) {
+      if (directions[i] === 'F' || directions[i] === 'B') {
+        rover.move(rover, directions[i]);
+      } else if (directions[i] === 'L' || directions[i] === 'R') {
+        rover.turn(rover, directions[i]);
+      }
+    } else return rover.position;
   }
   return rover.position;
 }
